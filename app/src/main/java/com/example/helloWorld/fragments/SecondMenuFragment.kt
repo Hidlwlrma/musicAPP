@@ -21,7 +21,6 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.menu_item.view.*
 import kotlinx.android.synthetic.main.menu_list.*
 import okhttp3.*
-import okhttp3.internal.addHeaderLenient
 import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
@@ -87,7 +86,6 @@ class SecondMenuFragment : Fragment() {
 
             val itemTouchHelper = ItemTouchHelper(callback)
             itemTouchHelper.attachToRecyclerView(menuListRecyclerView)
-            2
         }
 
 
@@ -118,7 +116,6 @@ class SecondMenuFragment : Fragment() {
             holder.menuItem.title.text = menu.title
             holder.menuItem.subtitle.text = menu.artist
             context?.let { Glide.with(it).load(menu.image).into(holder.menuItem.albumArt) }
-            Log.d("position","$positon")
         }
 
         override fun getItemCount(): Int {
@@ -127,7 +124,7 @@ class SecondMenuFragment : Fragment() {
     }
 
 
-    private fun sendRequestWithOkHttp(dataCB: (ArrayList<MenuData>) -> Int){
+    private fun sendRequestWithOkHttp(dataCB: (ArrayList<MenuData>) -> Unit){
         var itemList: ArrayList<MenuData>
         val client = OkHttpClient()
         val request = Request.Builder()
@@ -142,7 +139,8 @@ class SecondMenuFragment : Fragment() {
                 if (responseData != null) {
                     itemList = parseJSONWithGSON(responseData) as ArrayList<MenuData>
                     Handler(Looper.getMainLooper()).post{ //switch thread
-                        val xx = dataCB.invoke(itemList)
+//                        dataCB.invoke(itemList)
+                        dataCB(itemList)
                     }
                 }
             }

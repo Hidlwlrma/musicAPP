@@ -31,6 +31,10 @@ class MenuFragment : Fragment() {
         return inflater.inflate(R.layout.menu_list, container, false)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         val layoutManager = LinearLayoutManager(activity)

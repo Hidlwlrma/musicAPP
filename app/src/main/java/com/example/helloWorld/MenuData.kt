@@ -12,6 +12,6 @@ data class MenuData @JvmOverloads constructor(
     val image: String = "",
     val trackNumber: Int = 0,
     val totalTrackCount: Int = 0,
-    val duration: Int = 0,
+    val duration: Long = 0,
     val site: String = ""
 ) : Serializable
