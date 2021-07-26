@@ -11,10 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.annotation.RequiresApi
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_content.*
-import java.text.Format
-import java.text.SimpleDateFormat
-import java.util.*
-import java.util.logging.SimpleFormatter
 
 class ContentActivity : AppCompatActivity() {
 
@@ -35,26 +31,6 @@ class ContentActivity : AppCompatActivity() {
         mediaPlayer = MediaPlayer.create(this, Uri.parse(menu.source))
         playMusic(mediaPlayer)
 
-        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
-            override fun onProgressChanged(
-                seekBar: SeekBar?,
-                progress: Int,
-                fromUser: Boolean
-            ) {
-                if (fromUser) {
-                    mediaPlayer.seekTo(progress*1000)
-                }
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                Log.d("startPosition", "${seekBar?.progress}")
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                Log.d("stopPosition", "${seekBar?.progress}")
-            }
-        })
-
 
         val countDownTimer = object : CountDownTimer(mediaPlayer.duration.toLong(),1000) {
 
@@ -62,6 +38,10 @@ class ContentActivity : AppCompatActivity() {
                 position.text = convertToMMSS(mediaPlayer.currentPosition.toLong()/1000)
                 seekBar.setProgress(mediaPlayer.currentPosition/1000, false)
                 Log.d("currentPosition", "${mediaPlayer.currentPosition}")
+                Log.d("duration", "${mediaPlayer.duration}")
+                if (mediaPlayer.currentPosition/1000 == mediaPlayer.duration/1000) {
+                    this.onFinish()
+                }
             }
 
             override fun onFinish() {
@@ -70,6 +50,27 @@ class ContentActivity : AppCompatActivity() {
             }
         }
         countDownTimer.start()
+
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(
+                seekBar: SeekBar?,
+                progress: Int,
+                fromUser: Boolean
+            ) {
+                if (fromUser) {
+                    mediaPlayer.seekTo(progress * 1000)
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                Log.d("startPosition", "${seekBar?.progress}")
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                Log.d("stopPosition", "${seekBar?.progress}")
+            }
+        })
 
 
         media_button.setOnClickListener {
@@ -84,23 +85,20 @@ class ContentActivity : AppCompatActivity() {
     }
 
 
-
-    private fun convertToMMSS(time : Long) : String {
+    private fun convertToMMSS(time: Long): String {
         val minute = time / 60
         val second = time % 60
-        val text : String
-        if (second < 10) {
-            text = "${minute}:0${second}"
+        return if (second < 10) {
+            "${minute}:0${second}"
         } else {
-            text = "${minute}:${second}"
+            "${minute}:${second}"
         }
-        return text
     }
 
     override fun onDestroy() {
         super.onDestroy()
         mediaPlayer.stop()
-        mediaPlayer.release()
+//        mediaPlayer.release()
     }
 
     private fun playMusic(mediaPlayer : MediaPlayer) {
